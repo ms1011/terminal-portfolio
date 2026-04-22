@@ -1,0 +1,95 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #141414;
+  --bg2:       #1a1f1a;
+  --green:     #33FF66;
+  --green-dim: #2a7a40;
+  --green-low: #1a3a22;
+  --white:     #e8ffe8;
+  --amber:     #FFB347;
+  --amber-dim: #a06520;
+  --red:       #FF5555;
+  --border:    #2a4a2a;
+  --dash:      #2f5a2f;
+  --font:      'JetBrains Mono', Menlo, Consolas, monospace;
+  --fs:        13px;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--green);
+  font-family: var(--font);
+  font-size: var(--fs);
+  line-height: 1.55;
+  overflow: hidden;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 2px; }
+::selection { background: var(--green); color: var(--bg); }
+
+.glow    { text-shadow: 0 0 8px var(--green),  0 0 20px rgba(51,255,102,.2); }
+.g-amber { text-shadow: 0 0 8px var(--amber),  0 0 16px rgba(255,179,71,.2); }
+.g-red   { text-shadow: 0 0 8px var(--red); }
+
+@keyframes blink     { 0%,100%{opacity:1} 50%{opacity:0} }
+@keyframes fadeUp    { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+@keyframes pulse     { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.caret::after { content:'▊'; animation: blink 1s step-end infinite; color: var(--green); }
+.live-blink   { animation: pulse 2.2s ease-in-out infinite; }
+.fade-up      { animation: fadeUp .22s ease forwards; }
+
+#scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9000;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px, transparent 2px,
+    rgba(0,0,0,.055) 2px, rgba(0,0,0,.055) 4px
+  );
+}
+
+a { color: var(--green); text-decoration: none; }
+a:hover { color: var(--white); }
+
+button {
+  background: none;
+  border: 1px solid var(--green-dim);
+  color: var(--green);
+  font-family: var(--font);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 1px 8px;
+  transition: all .12s;
+}
+button:hover { background: var(--green); color: var(--bg); }
+
+input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--white);
+  font-family: var(--font);
+  font-size: var(--fs);
+  caret-color: var(--green);
+  width: 100%;
+}
+input::placeholder { color: var(--green-dim); }
+
+@media (max-width: 700px) {
+  :root { --fs: 11px; }
+  .hide-mobile { display: none !important; }
+}
