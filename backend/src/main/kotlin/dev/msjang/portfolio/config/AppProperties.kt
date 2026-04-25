@@ -24,6 +24,7 @@ data class PresenceProperties(
 data class NotificationProperties(
     val enabled: Boolean = true,
     val to: String = "",
+    val from: String = "",
 )
 
 @Configuration

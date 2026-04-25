@@ -24,6 +24,7 @@ class VisitorNotifier(
             .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss z"))
         val msg = SimpleMailMessage()
         msg.setTo(props.to)
+        if (props.from.isNotBlank()) msg.from = props.from
         msg.subject = "[Portfolio] 새 방문자 접속"
         msg.text = "접속 시각: $time"
         try {

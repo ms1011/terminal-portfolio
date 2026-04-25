@@ -37,3 +37,4 @@ app:
   notification:
     enabled: true
     to: msjang.dev@gmail.com
+    from: msjang.dev@gmail.com

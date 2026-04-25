@@ -20,7 +20,7 @@ class VisitorNotifierTest {
 
     @Test
     fun `sendEmail sends to configured address when enabled`() {
-        val props = NotificationProperties(to = "owner@example.com", enabled = true)
+        val props = NotificationProperties(to = "owner@example.com", enabled = true, from = "sender@example.com")
         val notifier = VisitorNotifier(mailSender, props)
         val captor = ArgumentCaptor.forClass(SimpleMailMessage::class.java)
 
@@ -29,6 +29,7 @@ class VisitorNotifierTest {
         verify(mailSender).send(captor.capture())
         val sent = captor.value
         assert(sent.to?.contains("owner@example.com") == true) { "wrong recipient" }
+        assert(sent.from == "sender@example.com") { "wrong from address" }
         assert(sent.subject?.contains("Portfolio") == true) { "subject missing Portfolio" }
         assert(sent.text?.contains("접속 시각") == true) { "body missing 접속 시각" }
     }
