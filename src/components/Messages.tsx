@@ -1,6 +1,6 @@
 import type {
   Message, MsgSystem, MsgCommand, MsgText,
-  MsgCard, MsgTable, MsgPresence, MsgLetter, MsgWave,
+  MsgCard, MsgTable, MsgPresence, MsgLetter, MsgWave, MsgMetrics,
 } from '../types'
 
 function MsgSystem({ lines }: Pick<MsgSystem, 'lines'>) {
@@ -154,6 +154,46 @@ function MsgWave({ from }: Pick<MsgWave, 'from'>) {
   )
 }
 
+function bar(pct: number, width = 10): string {
+  const filled = Math.round(Math.min(pct, 100) / 100 * width)
+  return '█'.repeat(filled) + '░'.repeat(width - filled)
+}
+
+function fmtUptime(ms: number): string {
+  const s = Math.floor(ms / 1000)
+  const d = Math.floor(s / 86400)
+  const h = String(Math.floor((s % 86400) / 3600)).padStart(2, '0')
+  const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0')
+  const sec = String(s % 60).padStart(2, '0')
+  return d > 0 ? `${d}d ${h}:${m}:${sec}` : `${h}:${m}:${sec}`
+}
+
+function MsgMetricsView({ data }: Pick<MsgMetrics, 'data'>) {
+  if (!data) {
+    return (
+      <div style={{ color: 'var(--green-dim)', fontSize: 11, marginBottom: 4 }}>
+        connecting to metrics stream...
+      </div>
+    )
+  }
+  return (
+    <div style={{ marginBottom: 8 }}>
+      <div style={{ fontSize: 11, color: 'var(--green-dim)', marginBottom: 4 }}>
+        SERVER METRICS  <span style={{ opacity: .5 }}>(live · 1s)</span>
+      </div>
+      <pre style={{
+        fontSize: 12, color: 'var(--green)', lineHeight: 1.8,
+        margin: 0, fontFamily: 'var(--font)',
+      }}>
+        {`heap  [${bar(data.heapPct)}] ${data.heapUsedMb}/${data.heapMaxMb} MB\n`}
+        {`cpu   [${bar(data.cpuPct)}] ${String(data.cpuPct).padStart(3)}%\n`}
+        {`req   ${data.reqCount.toLocaleString()} total\n`}
+        {`up    ${fmtUptime(data.uptimeMs)}`}
+      </pre>
+    </div>
+  )
+}
+
 export default function MessageView({ msg }: { msg: Message }) {
   switch (msg.type) {
     case 'system':   return <MsgSystem lines={msg.lines} />
@@ -164,5 +204,6 @@ export default function MessageView({ msg }: { msg: Message }) {
     case 'presence': return <MsgPresence visitors={msg.visitors} myNick={msg.myNick} />
     case 'letter':   return <MsgLetter myNick={msg.myNick} />
     case 'wave':     return <MsgWave from={msg.from} />
+    case 'metrics': return <MsgMetricsView data={msg.data} />
   }
 }

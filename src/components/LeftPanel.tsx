@@ -1,4 +1,4 @@
-import type { WsStatus } from '../types'
+import type { CommandFeedItem, WsStatus } from '../types'
 import { BIRD_ART } from '../data'
 
 interface Props {
@@ -6,9 +6,10 @@ interface Props {
   online: number
   wsStatus: WsStatus
   currentCmd: string | null
+  commandFeed: CommandFeedItem[]
 }
 
-export default function LeftPanel({ myNick, online, wsStatus, currentCmd }: Props) {
+export default function LeftPanel({ myNick, online, wsStatus, currentCmd, commandFeed }: Props) {
   const bc = wsStatus === 'CONNECTED' ? 'var(--amber)' : 'var(--red)'
   const bt = wsStatus === 'CONNECTED' ? `[LIVE] ${online} online`
            : wsStatus === 'RETRYING'  ? '[RETRYING]' : '[OFFLINE]'
@@ -65,6 +66,27 @@ export default function LeftPanel({ myNick, online, wsStatus, currentCmd }: Prop
           <span style={{ color: 'var(--green-dim)' }}>Spring Boot 3.x</span>
         </div>
       </div>
+
+      {commandFeed.length > 0 && (
+        <div style={{
+          borderTop: '1px dashed var(--dash)',
+          paddingTop: 10, marginBottom: 14,
+        }}>
+          <div style={{ fontSize: 10, color: 'var(--green-dim)', marginBottom: 5, opacity: .6 }}>
+            activity
+          </div>
+          {commandFeed.slice(-5).map((item, i) => (
+            <div key={i} style={{
+              fontSize: 10, color: 'var(--green-dim)',
+              marginBottom: 2, opacity: .75,
+              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+            }}>
+              <span style={{ color: 'var(--amber)', opacity: .85 }}>{item.nick}</span>
+              {' '}{item.cmd}
+            </div>
+          ))}
+        </div>
+      )}
 
       <div style={{ borderTop: '1px dashed var(--dash)', paddingTop: 12, marginTop: 'auto' }}>
         <div style={{ fontSize: 11, color: 'var(--green-dim)', marginBottom: 4 }}>
