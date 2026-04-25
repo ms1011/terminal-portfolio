@@ -59,6 +59,7 @@ class PresenceController(
     fun onCommand(request: CommandRequest, accessor: SimpMessageHeaderAccessor) {
         val sessionId = accessor.sessionId ?: return
         val session = registry.all().find { it.sessionId == sessionId } ?: return
+        if (request.cmd.isBlank()) return
         broadcast(CommandBroadcast(nick = session.nickname, cmd = request.cmd))
     }
 
