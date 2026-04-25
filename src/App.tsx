@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
-import type { Message, MessageInput, Visitor, WsStatus } from './types'
+import type { Message, MessageInput } from './types'
 import { PROJECTS, STACK_LINES, SLASH_CMDS } from './data'
 import MacWindow from './components/MacWindow'
 import LeftPanel from './components/LeftPanel'
 import RightPanel from './components/RightPanel'
 import CommandInput from './components/CommandInput'
 import TweaksPanel from './components/TweaksPanel'
+import { useMetrics } from './hooks/useMetrics'
+import { usePresence } from './hooks/usePresence'
 
 // ── helpers ──────────────────────────────────────────────────────
 const randNick = () => `visitor_${Math.floor(Math.random() * 18) + 2}`
@@ -42,42 +44,23 @@ const UPTIME_BASE = 14 * 86400 + 3 * 3600 + 22 * 60
 export default function App() {
   const myNick = useRef(randNick()).current
 
+  const metricsIdRef = useRef<number | null>(null)
+  const { data: metricsData, start: startMetrics } = useMetrics()
+
+  const { visitors, wsStatus, serverNick, commandFeed, sendCommand, sendPath, sendWave } =
+    usePresence((nick) => push({ type: 'wave', from: nick }))
+
+  const displayNick = serverNick ?? myNick
+
   const [messages, setMessages]           = useState<Message[]>(() => makeInitialMessages(myNick))
   const [history, setHistory]             = useState<string[]>([])
   const [currentCmd, setCurrentCmd]       = useState<string | null>(null)
-  const [wsStatus, setWsStatus]           = useState<WsStatus>('CONNECTED')
   const [_retryCount, setRetryCount]      = useState(0)
   const [tweaksVisible, setTweaksVisible] = useState(false)
-  const [visitors, setVisitors]           = useState<Visitor[]>([
-    { nick: myNick,      path: '/about',    idle: 0,  lastMoveAt: Date.now() },
-    { nick: 'visitor_3', path: '/projects', idle: 12, lastMoveAt: Date.now() - 12000 },
-    { nick: 'visitor_7', path: '/stack',    idle: 41, lastMoveAt: Date.now() - 41000 },
-    { nick: 'visitor_5', path: '/about',    idle: 3,  lastMoveAt: Date.now() - 3000  },
-  ])
 
   // ── push helper ───────────────────────────────────────────────
   const push = (...msgs: MessageInput[]) =>
     setMessages(prev => [...prev, ...msgs.map(m => ({ id: mkId(), ...m } as Message))])
-
-  // ── idle ticker ───────────────────────────────────────────────
-  useEffect(() => {
-    const t = setInterval(() => {
-      setVisitors(prev => prev.map(v => ({ ...v, idle: Math.floor((Date.now() - v.lastMoveAt) / 1000) })))
-    }, 1000)
-    return () => clearInterval(t)
-  }, [])
-
-  // ── fake visitor simulation ───────────────────────────────────
-  useEffect(() => {
-    const paths = ['/about', '/projects', '/stack', '/yapp', '/contact', '/live']
-    const fakeNicks = ['visitor_3', 'visitor_7', 'visitor_5']
-    const id = setInterval(() => {
-      const nick = fakeNicks[Math.floor(Math.random() * fakeNicks.length)]!
-      const path = paths[Math.floor(Math.random() * paths.length)]!
-      setVisitors(prev => prev.map(v => v.nick === nick ? { ...v, path, idle: 0, lastMoveAt: Date.now() } : v))
-    }, 7000 + Math.random() * 6000)
-    return () => clearInterval(id)
-  }, [])
 
   // ── tweaks bridge ─────────────────────────────────────────────
   useEffect(() => {
@@ -90,6 +73,16 @@ export default function App() {
     return () => window.removeEventListener('message', h)
   }, [])
 
+  // ── metricsData effect ────────────────────────────────────────
+  useEffect(() => {
+    if (metricsData && metricsIdRef.current !== null) {
+      const id = metricsIdRef.current
+      setMessages(prev =>
+        prev.map(m => (m.id === id ? { ...m, data: metricsData } as Message : m))
+      )
+    }
+  }, [metricsData])
+
   // ── command handler ───────────────────────────────────────────
   const handleCommand = (raw: string) => {
     const cmd = raw.trim()
@@ -98,6 +91,7 @@ export default function App() {
     setHistory(prev => [...prev, cmd])
     setCurrentCmd(cmd)
     push({ type: 'command', text: cmd })
+    sendCommand(cmd)
 
     const [verb, ...args] = cmd.split(/\s+/)
 
@@ -125,6 +119,14 @@ export default function App() {
           { text: 'hint: /project zendesk-websocket  to see metrics', color: 'var(--green-dim)' },
         ]})
         break
+
+      case '/metrics': {
+        const id = mkId()
+        metricsIdRef.current = id
+        startMetrics()
+        setMessages(prev => [...prev, { id, type: 'metrics', data: null }])
+        break
+      }
 
       case '/project': {
         const slug = args[0]
@@ -154,7 +156,7 @@ export default function App() {
         break
 
       case '/yapp':
-        push({ type: 'letter', myNick })
+        push({ type: 'letter', myNick: displayNick })
         break
 
       case '/contact':
@@ -166,21 +168,22 @@ export default function App() {
         break
 
       case '/live':
-        push({ type: 'presence', visitors, myNick })
+        push({ type: 'presence', visitors, myNick: displayNick })
         break
 
       case '/whoami':
         push({ type: 'text', lines: [
-          { text: `nickname : ${myNick}`, color: 'var(--amber)' },
+          { text: `nickname : ${displayNick}`, color: 'var(--amber)' },
           { text: `session  : active since ${fmtT()}`, color: 'var(--green-dim)' },
           { text: `uptime   : ${Math.floor((UPTIME_BASE + (Date.now() - startTime) / 1000) / 86400)}d server`, color: 'var(--green-dim)' },
         ]})
         break
 
       case '/wave':
-        push({ type: 'wave', from: myNick })
-        setVisitors(prev => prev.map(v => v.nick === myNick ? { ...v, path: '/wave', idle: 0, lastMoveAt: Date.now() } : v))
-        setTimeout(() => setVisitors(prev => prev.map(v => v.nick === myNick ? { ...v, path: '/about', idle: 0, lastMoveAt: Date.now() } : v)), 2000)
+        push({ type: 'wave', from: displayNick })
+        sendWave()
+        sendPath('/wave')
+        setTimeout(() => sendPath('/about'), 2000)
         break
 
       case '/help':
@@ -196,7 +199,7 @@ export default function App() {
         break
 
       case '/clear':
-        setMessages(makeInitialMessages(myNick))
+        setMessages(makeInitialMessages(displayNick))
         return
 
       case '/sudo': {
@@ -206,7 +209,7 @@ export default function App() {
             { text: '[sudo] password for hiring_manager: ··········', color: 'var(--green-dim)' },
           ]})
           setTimeout(() => push({ type: 'text', lines: [{ text: 'Authentication successful.', color: 'var(--amber)' }] }), 700)
-          setTimeout(() => push({ type: 'letter', myNick }), 1200)
+          setTimeout(() => push({ type: 'letter', myNick: displayNick }), 1200)
         } else {
           push({ type: 'text', lines: [{ text: `sudo: ${rest}: command not found`, color: 'var(--red)' }] })
         }
@@ -246,14 +249,20 @@ export default function App() {
       <div id="scanlines" />
       <MacWindow>
         <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
-          <LeftPanel myNick={myNick} online={visitors.length} wsStatus={wsStatus} currentCmd={currentCmd} />
+          <LeftPanel
+            myNick={displayNick}
+            online={visitors.length}
+            wsStatus={wsStatus}
+            currentCmd={currentCmd}
+            commandFeed={commandFeed}
+          />
           <RightPanel messages={messages} />
         </div>
         <CommandInput onCommand={handleCommand} history={history} />
         {tweaksVisible && (
           <TweaksPanel
             wsStatus={wsStatus}
-            setWsStatus={setWsStatus}
+            setWsStatus={() => {}}
             setRetryCount={setRetryCount}
             onExternalWave={externalWave}
           />
