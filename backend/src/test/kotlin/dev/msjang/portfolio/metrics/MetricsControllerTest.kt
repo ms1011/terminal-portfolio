@@ -8,6 +8,7 @@ import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.request
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @SpringBootTest
@@ -18,14 +19,12 @@ class MetricsControllerTest {
 
     @Test
     fun `stream endpoint returns text event stream content type`() {
-        val result = mvc.perform(
+        mvc.perform(
             get("/api/metrics/stream")
                 .accept(MediaType.TEXT_EVENT_STREAM)
         )
             .andExpect(status().isOk)
             .andExpect(header().string("Content-Type", org.hamcrest.Matchers.containsString("text/event-stream")))
-            .andReturn()
-
-        assert(result.response.contentType?.contains("text/event-stream") == true)
+            .andExpect(request().asyncStarted())
     }
 }
