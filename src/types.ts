@@ -21,6 +21,21 @@ export interface Visitor {
 
 export type WsStatus = 'CONNECTED' | 'RETRYING' | 'OFFLINE'
 
+export interface MetricsData {
+  heapUsedMb: number
+  heapMaxMb: number
+  heapPct: number
+  cpuPct: number
+  reqCount: number
+  uptimeMs: number
+}
+
+export interface CommandFeedItem {
+  nick: string
+  cmd: string
+  ts: number
+}
+
 // ── Message types ──
 
 export interface MsgSystem   { id: number; type: 'system';   lines: string[] }
@@ -31,6 +46,7 @@ export interface MsgTable    { id: number; type: 'table';    headers: string[]; 
 export interface MsgPresence { id: number; type: 'presence'; visitors: Visitor[]; myNick: string }
 export interface MsgLetter   { id: number; type: 'letter';   myNick: string }
 export interface MsgWave     { id: number; type: 'wave';     from: string }
+export interface MsgMetrics { id: number; type: 'metrics'; data: MetricsData | null }
 
 export type Message =
   | MsgSystem
@@ -41,6 +57,7 @@ export type Message =
   | MsgPresence
   | MsgLetter
   | MsgWave
+  | MsgMetrics
 
 export type MessageInput =
   | Omit<MsgSystem,   'id'>
@@ -51,6 +68,7 @@ export type MessageInput =
   | Omit<MsgPresence, 'id'>
   | Omit<MsgLetter,   'id'>
   | Omit<MsgWave,     'id'>
+  | Omit<MsgMetrics,  'id'>
 
 export interface Project {
   id: string
