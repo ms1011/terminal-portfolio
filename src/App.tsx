@@ -242,7 +242,7 @@ export default function App() {
     }
   }
 
-  const externalWave = () => push({ type: 'wave', from: 'visitor_3' })
+  const externalWave = () => push({ type: 'wave', from: displayNick })
 
   return (
     <>
