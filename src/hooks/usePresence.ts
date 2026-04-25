@@ -13,6 +13,8 @@ export function usePresence(onWave?: (nick: string) => void) {
   const onWaveRef = useRef(onWave)
   onWaveRef.current = onWave
 
+  const MAX_FEED = 8
+
   useEffect(() => {
     const t = setInterval(() => {
       setVisitors(prev => prev.map(v => ({
@@ -68,7 +70,7 @@ export function usePresence(onWave?: (nick: string) => void) {
             break
           case 'command.broadcast':
             setCommandFeed(prev => [
-              ...prev.slice(-7),
+              ...prev.slice(-(MAX_FEED - 1)),
               { nick: p.nick, cmd: p.cmd, ts: Date.now() },
             ])
             break
@@ -82,21 +84,27 @@ export function usePresence(onWave?: (nick: string) => void) {
   }, [])
 
   const sendCommand = useCallback((cmd: string) => {
-    clientRef.current?.publish({
-      destination: '/app/presence/command',
-      body: JSON.stringify({ cmd }),
-    })
+    if (clientRef.current?.connected) {
+      clientRef.current.publish({
+        destination: '/app/presence/command',
+        body: JSON.stringify({ cmd }),
+      })
+    }
   }, [])
 
   const sendPath = useCallback((path: string) => {
-    clientRef.current?.publish({
-      destination: '/app/presence/path',
-      body: JSON.stringify({ path }),
-    })
+    if (clientRef.current?.connected) {
+      clientRef.current.publish({
+        destination: '/app/presence/path',
+        body: JSON.stringify({ path }),
+      })
+    }
   }, [])
 
   const sendWave = useCallback(() => {
-    clientRef.current?.publish({ destination: '/app/presence/wave', body: '{}' })
+    if (clientRef.current?.connected) {
+      clientRef.current.publish({ destination: '/app/presence/wave', body: '{}' })
+    }
   }, [])
 
   return { visitors, wsStatus, serverNick, commandFeed, sendCommand, sendPath, sendWave }
