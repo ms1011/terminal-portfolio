@@ -39,3 +39,7 @@ data class ServerHeartbeat(val event: String = "server.heartbeat", val uptimeMs:
 // ── Client → Server payloads ────────────────────────────────
 
 data class PathChangeRequest(val path: String = "/intro")
+
+data class CommandBroadcast(val event: String = "command.broadcast", val nick: String, val cmd: String)
+
+data class CommandRequest(val cmd: String = "")

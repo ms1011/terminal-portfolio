@@ -55,6 +55,13 @@ class PresenceController(
     @MessageMapping("/presence/pong")
     fun onPong() { /* keep-alive ack */ }
 
+    @MessageMapping("/presence/command")
+    fun onCommand(request: CommandRequest, accessor: SimpMessageHeaderAccessor) {
+        val sessionId = accessor.sessionId ?: return
+        val session = registry.all().find { it.sessionId == sessionId } ?: return
+        broadcast(CommandBroadcast(nick = session.nickname, cmd = request.cmd))
+    }
+
     @Scheduled(fixedDelayString = "\${app.presence.heartbeat-interval-ms}")
     fun heartbeat() = broadcast(ServerHeartbeat(uptimeMs = registry.uptimeMs()))
 
