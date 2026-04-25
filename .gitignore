@@ -15,3 +15,10 @@ backend/*.jar
 .vscode/
 *.iml
 .DS_Store
+
+# Playwright
+test-results/
+playwright-report/
+
+# Claude Code
+.claude/

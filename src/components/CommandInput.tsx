@@ -126,6 +126,7 @@ export default function CommandInput({ onCommand, history }: Props) {
         <span style={{ color: 'var(--amber)', fontSize: 13, flexShrink: 0 }} className="g-amber">{'>'}</span>
         <input
           ref={inputRef}
+          type="text"
           value={input}
           onChange={handleChange}
           onKeyDown={handleKey}

@@ -30,7 +30,7 @@ function makeInitialMessages(nick: string): Message[] {
       id: mkId(), type: 'system',
       lines: [
         `connected as ${nick}`,
-        '[LIVE] connecting...',
+        'connecting to presence server...',
         '',
         'type / to see slash commands',
         'or try:  /about  /projects  /help',
@@ -177,7 +177,6 @@ export default function App() {
         break
 
       case '/wave':
-        push({ type: 'wave', from: displayNick })
         sendWave()
         sendPath('/wave')
         setTimeout(() => sendPath('/about'), 2000)
