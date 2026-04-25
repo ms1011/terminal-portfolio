@@ -20,6 +20,17 @@ data class PresenceProperties(
     val waveRateLimit: Int = 5,
 )
 
+@ConfigurationProperties(prefix = "app.notification")
+data class NotificationProperties(
+    val enabled: Boolean = true,
+    val to: String = "",
+)
+
 @Configuration
-@EnableConfigurationProperties(CorsProperties::class, IntroProperties::class, PresenceProperties::class)
+@EnableConfigurationProperties(
+    CorsProperties::class,
+    IntroProperties::class,
+    PresenceProperties::class,
+    NotificationProperties::class,
+)
 class AppPropertiesConfig
