@@ -47,6 +47,8 @@ class PresenceSessionRegistry {
 
     fun all(): List<PresenceSession> = sessions.values.toList()
 
+    fun findById(sessionId: String): PresenceSession? = sessions[sessionId]
+
     fun snapshot(): PresenceSnapshot {
         val now = Instant.now().toEpochMilli()
         return PresenceSnapshot(

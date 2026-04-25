@@ -25,7 +25,10 @@ export function useMetrics() {
     setData(null)
   }, [])
 
-  useEffect(() => () => { esRef.current?.close() }, [])
+  useEffect(() => () => {
+    esRef.current?.close()
+    esRef.current = null
+  }, [])
 
   return { data, start, stop }
 }

@@ -30,7 +30,7 @@ function makeInitialMessages(nick: string): Message[] {
       id: mkId(), type: 'system',
       lines: [
         `connected as ${nick}`,
-        '[LIVE] 3 visitors online',
+        '[LIVE] connecting...',
         '',
         'type / to see slash commands',
         'or try:  /about  /projects  /help',
@@ -44,7 +44,6 @@ const UPTIME_BASE = 14 * 86400 + 3 * 3600 + 22 * 60
 export default function App() {
   const myNick = useRef(randNick()).current
 
-  const metricsIdRef = useRef<number | null>(null)
   const { data: metricsData, start: startMetrics } = useMetrics()
 
   const { visitors, wsStatus, serverNick, commandFeed, sendCommand, sendPath, sendWave } =
@@ -75,10 +74,9 @@ export default function App() {
 
   // ── metricsData effect ────────────────────────────────────────
   useEffect(() => {
-    if (metricsData && metricsIdRef.current !== null) {
-      const id = metricsIdRef.current
+    if (metricsData) {
       setMessages(prev =>
-        prev.map(m => (m.id === id ? { ...m, data: metricsData } as Message : m))
+        prev.map(m => (m.type === 'metrics' ? { ...m, data: metricsData } as Message : m))
       )
     }
   }, [metricsData])
@@ -122,7 +120,6 @@ export default function App() {
 
       case '/metrics': {
         const id = mkId()
-        metricsIdRef.current = id
         startMetrics()
         setMessages(prev => [...prev, { id, type: 'metrics', data: null }])
         break
