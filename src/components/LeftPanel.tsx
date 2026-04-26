@@ -33,7 +33,7 @@ export default function LeftPanel({ myNick, online, wsStatus, currentCmd, comman
       <div style={{ marginBottom: 14 }}>
         <div style={{ color: 'var(--green-dim)', fontSize: 11, marginBottom: 3 }}>Hello, YAPP 운영진.</div>
         <div style={{ color: 'var(--amber)', fontSize: 12, fontWeight: 700, lineHeight: 1.5 }} className="g-amber">
-          This site IS the demo.
+          28기가 되고 싶어서 배포했습니다.
         </div>
         <div style={{
           display: 'inline-block', marginTop: 6,
@@ -63,7 +63,7 @@ export default function LeftPanel({ myNick, online, wsStatus, currentCmd, comman
         </div>
         <div>
           <span style={{ color: 'var(--green-dim)' }}>role  </span>
-          <span style={{ color: 'var(--green)' }}>Backend Engineer</span>
+          <span style={{ color: 'var(--green)' }}>Server</span>
         </div>
         <div>
           <span style={{ color: 'var(--green-dim)' }}>stack </span>

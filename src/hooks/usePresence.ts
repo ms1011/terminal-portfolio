@@ -35,12 +35,13 @@ export function usePresence(onWave?: (nick: string) => void) {
 
     client.onConnect = () => {
       setWsStatus('CONNECTED')
+      client.subscribe('/user/queue/session', (msg) => {
+        const p = JSON.parse(msg.body)
+        if (p.nick) setServerNick(p.nick)
+      })
       client.subscribe('/topic/presence', (msg) => {
         const p = JSON.parse(msg.body)
         switch (p.event) {
-          case 'session.assigned':
-            setServerNick(p.nick)
-            break
           case 'presence.snapshot':
             setVisitors((p.users as any[]).map((u: any) => ({
               nick: u.nick,
@@ -76,6 +77,7 @@ export function usePresence(onWave?: (nick: string) => void) {
             break
         }
       })
+      client.publish({ destination: '/app/presence/hello', body: '{}' })
     }
 
     client.activate()

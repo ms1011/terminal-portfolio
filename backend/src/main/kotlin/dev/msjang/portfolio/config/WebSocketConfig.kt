@@ -17,7 +17,7 @@ class WebSocketConfig(private val cors: CorsProperties) : WebSocketMessageBroker
     }
 
     override fun configureMessageBroker(registry: MessageBrokerRegistry) {
-        registry.enableSimpleBroker("/topic")
+        registry.enableSimpleBroker("/topic", "/queue")
         registry.setApplicationDestinationPrefixes("/app")
     }
 }

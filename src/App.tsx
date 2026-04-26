@@ -82,6 +82,15 @@ export default function App() {
     }
   }, [metricsData])
 
+  // ── serverNick effect: backfill letter messages created before hello handshake ──
+  useEffect(() => {
+    if (serverNick) {
+      setMessages(prev =>
+        prev.map(m => (m.type === 'letter' ? { ...m, myNick: serverNick } as Message : m))
+      )
+    }
+  }, [serverNick])
+
   // ── command handler ───────────────────────────────────────────
   const handleCommand = (raw: string) => {
     const cmd = raw.trim()
@@ -119,13 +128,6 @@ export default function App() {
         ]})
         break
 
-      case '/metrics': {
-        const id = mkId()
-        startMetrics()
-        setMessages(prev => [...prev, { id, type: 'metrics', data: null }])
-        break
-      }
-
       case '/project': {
         const slug = args[0]
         const p = PROJECTS.find(x => x.slug === slug || x.id.toLowerCase() === slug?.toLowerCase())
@@ -161,7 +163,6 @@ export default function App() {
         push({ type: 'text', lines: [
           { text: 'email  : msjang.dev@gmail.com', color: 'var(--white)' },
           { text: 'github : github.com/msjang',     color: 'var(--green)' },
-          { text: 'blog   : (coming soon)',          color: 'var(--green-dim)' },
         ]})
         break
 

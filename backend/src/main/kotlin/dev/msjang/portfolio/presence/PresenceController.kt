@@ -5,6 +5,7 @@ import org.springframework.context.event.EventListener
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.messaging.simp.annotation.SendToUser
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Controller
 import org.springframework.web.socket.messaging.SessionConnectedEvent
@@ -27,10 +28,17 @@ class PresenceController(
         val sessionId = SimpMessageHeaderAccessor.wrap(event.message).sessionId ?: return
         val session = registry.register(sessionId)
 
-        messaging.convertAndSend("/topic/presence", SessionAssigned(nick = session.nickname, sid = sessionId))
         messaging.convertAndSend("/topic/presence", registry.snapshot())
         broadcast(PresenceJoin(nick = session.nickname, path = session.currentPath))
 //        notifier.sendEmail(session)
+    }
+
+    @MessageMapping("/presence/hello")
+    @SendToUser("/queue/session")
+    fun onHello(accessor: SimpMessageHeaderAccessor): SessionAssigned {
+        val sessionId = accessor.sessionId ?: throw IllegalStateException("No session")
+        val session = registry.findById(sessionId) ?: throw IllegalStateException("Session not found")
+        return SessionAssigned(nick = session.nickname, sid = sessionId)
     }
 
     @EventListener

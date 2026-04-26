@@ -14,6 +14,12 @@ function SlashMenu({
   activeIdx: number
   onSelect: (cmd: string) => void
 }) {
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  useEffect(() => {
+    itemRefs.current[activeIdx]?.scrollIntoView({ block: 'nearest' })
+  }, [activeIdx])
+
   if (!visible) return null
   const filtered = SLASH_CMDS.filter(c => c.cmd.startsWith(query || '/'))
 
@@ -27,6 +33,7 @@ function SlashMenu({
       {filtered.map((c, i) => (
         <div
           key={c.cmd}
+          ref={el => { itemRefs.current[i] = el }}
           onClick={() => onSelect(c.cmd)}
           style={{
             display: 'flex', gap: 12, padding: '6px 14px',

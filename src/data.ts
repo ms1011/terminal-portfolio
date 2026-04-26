@@ -68,7 +68,6 @@ export const SLASH_CMDS: SlashCmd[] = [
   { cmd: '/whoami',   desc: '내 닉네임 확인' },
   { cmd: '/wave',     desc: '모두에게 인사 👋' },
   { cmd: '/help',     desc: '전체 명령어 목록' },
-  { cmd: '/metrics',  desc: '서버 메트릭 실시간 스트림' },
   { cmd: '/clear',    desc: '채팅 초기화' },
 ]
 
