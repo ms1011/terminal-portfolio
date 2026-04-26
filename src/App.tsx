@@ -124,7 +124,7 @@ export default function App() {
           ]})
         })
         push({ type: 'text', lines: [
-          { text: 'hint: /project zendesk-websocket  to see metrics', color: 'var(--green-dim)' },
+          { text: 'hint: /project gsc-websocket  to see detail', color: 'var(--green-dim)' },
         ]})
         break
 
