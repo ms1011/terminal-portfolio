@@ -17,7 +17,7 @@ class PresenceController(
     private val registry: PresenceSessionRegistry,
     private val messaging: SimpMessagingTemplate,
     private val props: PresenceProperties,
-    private val notifier: VisitorNotifier,
+//    private val notifier: VisitorNotifier,
 ) {
     private val waveCounters = ConcurrentHashMap<String, MutableList<Long>>()
     private val commandCounters = ConcurrentHashMap<String, MutableList<Long>>()
@@ -30,7 +30,7 @@ class PresenceController(
         messaging.convertAndSend("/topic/presence", SessionAssigned(nick = session.nickname, sid = sessionId))
         messaging.convertAndSend("/topic/presence", registry.snapshot())
         broadcast(PresenceJoin(nick = session.nickname, path = session.currentPath))
-        notifier.sendEmail(session)
+//        notifier.sendEmail(session)
     }
 
     @EventListener

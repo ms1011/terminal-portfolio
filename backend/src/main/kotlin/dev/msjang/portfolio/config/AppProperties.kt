@@ -32,6 +32,6 @@ data class NotificationProperties(
     CorsProperties::class,
     IntroProperties::class,
     PresenceProperties::class,
-    NotificationProperties::class,
+//    NotificationProperties::class,
 )
 class AppPropertiesConfig

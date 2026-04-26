@@ -1,6 +1,7 @@
 package dev.msjang.portfolio.presence
 
 import dev.msjang.portfolio.config.NotificationProperties
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentCaptor
@@ -12,6 +13,7 @@ import org.mockito.kotlin.verify
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.mail.javamail.JavaMailSender
 
+@Disabled("visitor email notification disabled")
 @ExtendWith(MockitoExtension::class)
 class VisitorNotifierTest {
 

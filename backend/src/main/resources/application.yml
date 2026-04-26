@@ -1,14 +1,14 @@
 spring:
   application:
     name: portfolio-api
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: msjang.dev@gmail.com
-    password: ${MAIL_PASSWORD:}
-    properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: msjang.dev@gmail.com
+#    password: ${MAIL_PASSWORD:}
+#    properties:
+#      mail.smtp.auth: true
+#      mail.smtp.starttls.enable: true
 
 server:
   port: 8080
@@ -34,7 +34,7 @@ app:
   presence:
     heartbeat-interval-ms: 10000
     wave-rate-limit: 5
-  notification:
-    enabled: true
-    to: msjang.dev@gmail.com
-    from: msjang.dev@gmail.com
+#  notification:
+#    enabled: true
+#    to: msjang.dev@gmail.com
+#    from: msjang.dev@gmail.com

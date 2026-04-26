@@ -10,7 +10,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-@Component
+// @Component
 class VisitorNotifier(
     private val mailSender: JavaMailSender,
     private val props: NotificationProperties,
