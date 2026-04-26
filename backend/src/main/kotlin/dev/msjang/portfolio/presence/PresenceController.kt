@@ -38,6 +38,7 @@ class PresenceController(
     fun onHello(accessor: SimpMessageHeaderAccessor): SessionAssigned {
         val sessionId = accessor.sessionId ?: throw IllegalStateException("No session")
         val session = registry.findById(sessionId) ?: throw IllegalStateException("Session not found")
+        messaging.convertAndSend("/topic/presence", registry.snapshot())
         return SessionAssigned(nick = session.nickname, sid = sessionId)
     }
 

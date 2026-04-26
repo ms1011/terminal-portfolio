@@ -121,11 +121,9 @@ export default function App() {
             { label: 'solution:', value: p.solution, color: 'var(--green)' },
             { label: 'result  :', value: p.result,   color: 'var(--amber)' },
             { label: 'period  :', value: `${p.period}  [${p.stack.join(', ')}]`, color: 'var(--green-dim)' },
+            { label: 'detail  :', value: `/project ${p.slug}`, color: 'var(--green-low)' },
           ]})
         })
-        push({ type: 'text', lines: [
-          { text: 'hint: /project gsc-websocket  to see detail', color: 'var(--green-dim)' },
-        ]})
         break
 
       case '/project': {
