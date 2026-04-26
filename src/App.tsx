@@ -121,7 +121,7 @@ export default function App() {
             { label: 'solution:', value: p.solution, color: 'var(--green)' },
             { label: 'result  :', value: p.result,   color: 'var(--amber)' },
             { label: 'period  :', value: `${p.period}  [${p.stack.join(', ')}]`, color: 'var(--green-dim)' },
-            { label: 'detail  :', value: `/project ${p.slug}`, color: 'var(--green-low)' },
+            { label: 'detail  :', value: `/project ${p.slug}`, color: 'var(--green-dim)' },
           ]})
         })
         break
