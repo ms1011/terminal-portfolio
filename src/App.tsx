@@ -45,7 +45,7 @@ const UPTIME_BASE = 14 * 86400 + 3 * 3600 + 22 * 60
 export default function App() {
   const myNick = useRef(randNick()).current
 
-  const { data: metricsData, start: startMetrics } = useMetrics()
+  const { data: metricsData } = useMetrics()
 
   const { visitors, wsStatus, serverNick, commandFeed, sendCommand, sendPath, sendWave } =
     usePresence((nick) => push({ type: 'wave', from: nick }))
