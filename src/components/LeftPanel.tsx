@@ -31,9 +31,17 @@ export default function LeftPanel({ myNick, online, wsStatus, currentCmd, comman
       </div>
 
       <div style={{ marginBottom: 14 }}>
-        <div style={{ color: 'var(--green-dim)', fontSize: 11, marginBottom: 3 }}>Hello, Reviewer.</div>
+        <div style={{ color: 'var(--green-dim)', fontSize: 11, marginBottom: 3 }}>Hello, YAPP 운영진.</div>
         <div style={{ color: 'var(--amber)', fontSize: 12, fontWeight: 700, lineHeight: 1.5 }} className="g-amber">
           This site IS the demo.
+        </div>
+        <div style={{
+          display: 'inline-block', marginTop: 6,
+          border: '1px solid var(--amber)', borderRadius: 2,
+          padding: '1px 6px', fontSize: 10,
+          color: 'var(--amber)', opacity: .75, letterSpacing: '.05em',
+        }}>
+          YAPP 28기 지원작
         </div>
       </div>
 

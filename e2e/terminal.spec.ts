@@ -12,8 +12,15 @@ async function runCmd(page: Page, cmd: string) {
 test('페이지 로드 시 터미널 UI가 렌더링된다', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByText('terminal-portfolio v1.0.0').first()).toBeVisible()
-  await expect(page.getByText('Hello, Reviewer.')).toBeVisible()
+  await expect(page.getByText('Hello, YAPP 운영진.')).toBeVisible()
   await expect(page.getByText('This site IS the demo.')).toBeVisible()
+  await expect(page.getByText('YAPP 28기 지원작')).toBeVisible()
+})
+
+test('접속 시 YAPP 편지가 자동으로 표시된다', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByText(/To.*YAPP 운영진/).first()).toBeVisible()
+  await expect(page.getByText(/왜 YAPP인가/).first()).toBeVisible()
 })
 
 test('초기 메시지에 connected as visitor_ 가 표시된다', async ({ page }) => {
@@ -52,7 +59,7 @@ test('/stack 명령어가 기술 스택을 출력한다', async ({ page }) => {
 test('/contact 명령어가 이메일을 출력한다', async ({ page }) => {
   await page.goto('/')
   await runCmd(page, '/contact')
-  await expect(page.getByText(/msjang\.dev@gmail\.com/)).toBeVisible()
+  await expect(page.getByText(/msjang\.dev@gmail\.com/).first()).toBeVisible()
 })
 
 test('/whoami 명령어가 닉네임을 출력한다', async ({ page }) => {

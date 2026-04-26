@@ -36,6 +36,7 @@ function makeInitialMessages(nick: string): Message[] {
         'or try:  /about  /projects  /help',
       ],
     },
+    { id: mkId(), type: 'letter', myNick: nick },
   ]
 }
 
