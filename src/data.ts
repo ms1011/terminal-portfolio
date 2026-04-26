@@ -76,6 +76,7 @@ export const STACK_LINES = [
 export const SLASH_CMDS: SlashCmd[] = [
   { cmd: '/about',    desc: '자기소개 보기' },
   { cmd: '/projects', desc: '프로젝트 목록' },
+  { cmd: '/project',  desc: '프로젝트 상세  예) /project gsc-websocket' },
   { cmd: '/stack',    desc: '기술 스택' },
   { cmd: '/yapp',     desc: 'YAPP 지원 메시지' },
   { cmd: '/contact',  desc: '연락처' },
